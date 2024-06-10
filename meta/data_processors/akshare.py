@@ -70,7 +70,7 @@ class Akshare(_Base):
         for i in tqdm(ticker_list, total=len(ticker_list)):
             nonstandard_id = self.transfer_standard_ticker_to_nonstandard(i)
             df_temp = self.get_data(nonstandard_id)
-            df_temp["tic"] = i
+            # df_temp["tic"] = i
             # df_temp = self.get_data(i)
             self.dataframe = pd.concat([self.dataframe, df_temp])
             # self.dataframe = self.dataframe.append(df_temp)
@@ -79,6 +79,7 @@ class Akshare(_Base):
 
         self.dataframe.columns = [
             "time",
+            "tic",
             "open",
             "close",
             "high",
@@ -88,8 +89,7 @@ class Akshare(_Base):
             "amplitude",
             "pct_chg",
             "change",
-            "turnover",
-            "tic",
+            "turnover"
         ]
 
         self.dataframe.sort_values(by=["time", "tic"], inplace=True)

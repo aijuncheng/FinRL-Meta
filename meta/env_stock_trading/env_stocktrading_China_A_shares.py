@@ -510,18 +510,21 @@ class StockTradingEnv(gym.Env):
         market_values_each_tic = 0.5 * self.initial_amount // len(prices)
         buy_nums_each_tic = [int(market_values_each_tic // p) for p in prices]
         if self.hundred_each_trade:
-            buy_nums_each_tic = buy_nums_each_tic // 100 * 100
+            buy_nums_each_tic = np.array(buy_nums_each_tic) // 100 * 100
 
-        buy_amount = sum(np.array(prices) * np.array(buy_nums_each_tic))
-
-        state = (
-            [self.initial_amount - buy_amount]
-            + prices
-            + buy_nums_each_tic
-            + sum(
+        buy_amount = sum(np.array(prices) * buy_nums_each_tic)
+        
+        statearry =  []
+        statearry.extend([self.initial_amount - buy_amount])
+        statearry.extend(prices)
+        statearry.extend(buy_nums_each_tic)
+        statearry.extend(sum(
                 [self.data[tech].values.tolist() for tech in self.tech_indicator_list],
                 [],
-            )
+            ))
+        
+        state = (
+           statearry
         )
 
         return state

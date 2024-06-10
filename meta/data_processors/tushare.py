@@ -75,7 +75,8 @@ class Tushare(_Base):
             # nonstandard_id = self.transfer_standard_ticker_to_nonstandard(i)
             # df_temp = self.get_data(nonstandard_id)
             df_temp = self.get_data(i)
-            self.dataframe = self.dataframe.append(df_temp)
+            self.dataframe = pd.concat([self.dataframe, df_temp], ignore_index=True)
+            # self.dataframe = self.dataframe.append(df_temp)
             # print("{} ok".format(i))
             time.sleep(0.25)
 
@@ -173,7 +174,13 @@ class ReturnPlotter:
         self.df_account_value = df_account_value
 
     def get_baseline(self, ticket):
-        df = ts.get_hist_data(ticket, start=self.start, end=self.end)
+        # df = ts.get_hist_data(ticket, start=self.start, end=self.end)
+        df = ts.pro_bar(
+            ts_code=ticket,
+            start_date=self.start,
+            end_date=self.end,
+            asset='I', 
+        )
         df.loc[:, "dt"] = df.index
         df.index = range(len(df))
         df.sort_values(axis=0, by="dt", ascending=True, inplace=True)
@@ -209,6 +216,7 @@ class ReturnPlotter:
                 avg_close = sum(day_close) / len(day_close)
                 baseline.append(avg_close)
             ours = self.df_account_value.account_value.tolist()
+            print("baseline_1",len(baseline))
 
         ours = self.pct(ours)
         baseline = self.pct(baseline)
@@ -219,6 +227,9 @@ class ReturnPlotter:
         time = list(range(len(ours)))
         datetimes = self.df_account_value.time.tolist()
         ticks = [tick for t, tick in zip(time, datetimes) if t % days_per_tick == 0]
+        print("time_len", len(time))
+        print("ours_len",len(ours))
+        print("baseline_2",len(baseline))
         plt.title("Cumulative Returns")
         plt.plot(time, ours, label="DDPG Agent", color="green")
         plt.plot(time, baseline, label=baseline_label, color="grey")
