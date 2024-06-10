@@ -216,7 +216,6 @@ class ReturnPlotter:
                 avg_close = sum(day_close) / len(day_close)
                 baseline.append(avg_close)
             ours = self.df_account_value.account_value.tolist()
-            print("baseline_1",len(baseline))
 
         ours = self.pct(ours)
         baseline = self.pct(baseline)
@@ -227,9 +226,6 @@ class ReturnPlotter:
         time = list(range(len(ours)))
         datetimes = self.df_account_value.time.tolist()
         ticks = [tick for t, tick in zip(time, datetimes) if t % days_per_tick == 0]
-        print("time_len", len(time))
-        print("ours_len",len(ours))
-        print("baseline_2",len(baseline))
         plt.title("Cumulative Returns")
         plt.plot(time, ours, label="DDPG Agent", color="green")
         plt.plot(time, baseline, label=baseline_label, color="grey")
